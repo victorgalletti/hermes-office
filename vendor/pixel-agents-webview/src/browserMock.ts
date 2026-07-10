@@ -252,6 +252,11 @@ export function dispatchMockMessages(): void {
     window.dispatchEvent(new MessageEvent('message', { data }));
   }
 
+  // Demo-only Hermes activity. These messages use the unmodified Pixel Agents
+  // transport contract, so replacing this fixture with a Hermes adapter does not
+  // require changing the renderer.
+  dispatch({ type: 'existingAgents', agents: [101, 102, 103, 104] });
+
   // Must match the load order defined in CLAUDE.md:
   // characterSpritesLoaded -> floorTilesLoaded -> wallTilesLoaded -> furnitureAssetsLoaded -> layoutLoaded
   dispatch({ type: 'characterSpritesLoaded', characters });
@@ -259,6 +264,14 @@ export function dispatchMockMessages(): void {
   dispatch({ type: 'wallTilesLoaded', sets: wallSets });
   dispatch({ type: 'furnitureAssetsLoaded', catalog: furnitureCatalog, sprites: furnitureSprites });
   dispatch({ type: 'layoutLoaded', layout });
+  dispatch({ type: 'agentTeamInfo', id: 101, agentName: 'Product research' });
+  dispatch({ type: 'agentTeamInfo', id: 102, agentName: 'Margin analysis' });
+  dispatch({ type: 'agentTeamInfo', id: 103, agentName: 'Amazon catalog' });
+  dispatch({ type: 'agentTeamInfo', id: 104, agentName: 'Operations' });
+  dispatch({ type: 'agentToolStart', id: 101, toolId: 'demo-search', status: 'WebSearch: finding product opportunities' });
+  dispatch({ type: 'agentToolStart', id: 102, toolId: 'demo-analysis', status: 'Read: calculating margin scenarios' });
+  dispatch({ type: 'agentToolStart', id: 103, toolId: 'demo-catalog', status: 'Write: preparing catalog entries' });
+  dispatch({ type: 'agentStatus', id: 104, status: 'waiting', awaitingInput: true });
   dispatch({
     type: 'settingsLoaded',
     soundEnabled: false,

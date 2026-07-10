@@ -11,7 +11,7 @@ declare function acquireVsCodeApi(): unknown;
 type Runtime = 'vscode' | 'browser';
 // Future: 'cursor' | 'windsurf' | 'electron' | etc.
 
-const runtime: Runtime = typeof acquireVsCodeApi !== 'undefined' ? 'vscode' : 'browser';
+const runtime: Runtime = typeof acquireVsCodeApi !== 'undefined' && !/^https?:$/.test(window.location.protocol) ? 'vscode' : 'browser';
 
 export const isBrowserRuntime = runtime === 'browser';
 

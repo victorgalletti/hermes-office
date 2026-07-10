@@ -49,8 +49,13 @@ function App() {
     // browserMock is for Vite dev mode only (UI prototyping without a server).
     // In standalone server mode, the server sends all state over WebSocket.
     // In VS Code mode, the extension sends all state via postMessage.
-    if (isBrowserRuntime && import.meta.env.DEV) {
-      void import('./browserMock.js').then(({ dispatchMockMessages }) => dispatchMockMessages());
+    if (isBrowserRuntime) {
+      // The listener is installed by useExtensionMessages. Publish the fixture
+      // on the next task so it cannot miss the initial office state.
+      const timer = window.setTimeout(() => {
+        void import('./browserMock.js').then(({ dispatchMockMessages }) => dispatchMockMessages());
+      }, 50);
+      return () => window.clearTimeout(timer);
     }
   }, []);
 
