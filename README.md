@@ -1,61 +1,75 @@
-# Hermes Office
+﻿# Hermes Office
 
-`hermes-office` e uma biblioteca React de visualizacao para agentes
-Hermes. Ela desenha um escritorio pixelado em Canvas e recebe apenas estado
-normalizado de agentes; nao controla Hermes e nao substitui Hermes Workspace.
+Hermes Office is a Next.js-powered visual workspace for Hermes Agent activity.
+It is a companion surface for an admin dashboard: Hermes Workspace remains the
+operational console for chat, sessions, configuration, jobs, and costs.
 
-## Objetivo
+## Goals
 
-O admin pode exibir uma leitura visual de trabalho em andamento sem duplicar
-terminal, sessoes, custos, cron ou configuracoes que ja pertencem ao Hermes
-Workspace.
+- Render Hermes agents as visible characters in a pixel office.
+- Consume normalized Hermes snapshots and server-sent events without polling.
+- Keep Hermes secrets and dashboard tokens on the server side.
+- Ship a reusable React package named `hermes-office`.
 
-O projeto foi inspirado na arquitetura agnostica de agentes do Pixel Agents,
-mas e implementado de forma independente: nenhum codigo ou asset externo foi
-copiado para este repositorio.
+## Architecture
 
-## Estado atual
-
-- Biblioteca React isolada e pronta para empacotamento.
-- Canvas responsivo com personagens, mesas, atividades e clique por agente.
-- Contratos para snapshots e eventos incrementais.
-- Cliente SSE para um endpoint do backend do admin.
-- Adaptador inicial de resumo de sessoes Hermes para personagens.
-
-## O que ela nao faz
-
-- Nao chama a API Hermes pelo navegador.
-- Nao armazena ou expoe `API_SERVER_KEY` ou token do Dashboard.
-- Nao usa polling.
-- Nao tenta reproduzir a interface do Hermes Workspace.
-
-## Uso local
-
-Instale dependencias quando este pacote for publicado ou adicionado ao
-workspace npm do monorepo:
-
-```tsx
-import { HermesOffice, type HermesAgent } from "hermes-office";
-
-const agents: HermesAgent[] = [
-  {
-    id: "discord:research",
-    name: "Pesquisa de produtos",
-    activity: "reading",
-    source: "discord",
-    model: "z-ai/glm-5.2",
-  },
-];
-
-export function AgentView() {
-  return <HermesOffice agents={agents} />;
-}
+```text
+Hermes API / Workspace events
+        -> Admin backend adapter
+        -> authenticated SSE endpoint
+        -> Hermes Office React renderer
 ```
 
-## Contrato de eventos
+The current public contract accepts `HermesAgent` snapshots and incremental
+`OfficeEvent` messages. The adapter is intentionally separate from the visual
+renderer so the UI does not depend on Hermes internal files or credentials.
 
-O backend devera publicar SSE autenticado para o admin. Cada mensagem deve ter
-um dos tipos abaixo e conter JSON no `data`:
+## Pixel Agents attribution
+
+This project vendors the Pixel Agents webview renderer under
+`vendor/pixel-agents-webview`. The renderer and included assets are licensed
+under MIT by Pablo De Lucca. Their copyright and license are preserved in that
+directory and in `THIRD_PARTY_LICENSES_PIXEL_AGENTS.txt`.
+
+The vendored renderer is the source for the full office engine: tiles, layout,
+pathfinding, furniture, sprite animation, and character states. Hermes Office
+will replace its temporary demo renderer with an adapter over that engine.
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://127.0.0.1:4173` for the Next.js demo.
+
+Useful checks:
+
+```bash
+npm run typecheck
+npm run build
+npm run demo:build
+```
+
+## Publishing
+
+The package name is `hermes-office`.
+
+```bash
+pnpm publish
+pnpm add hermes-office
+```
+
+The equivalent npm command is:
+
+```bash
+npm install hermes-office
+```
+
+## Event contract
+
+The backend exposes an authenticated SSE stream:
 
 ```text
 event: snapshot
@@ -68,31 +82,5 @@ event: agent.removed
 data: {"id":"..."}
 ```
 
-O cliente usa `EventSource`: ele mantem uma conexao aberta e nao faz requests
-periodicos. Em reconexao, o servidor envia um novo `snapshot` antes de eventos
-incrementais.
-
-## Integracao Hermes recomendada
-
-1. O backend obtem snapshots autenticados de sessoes Hermes.
-2. Sessoes viram personagens com `sessionToAgent`.
-3. Runs iniciados pelo admin usam o SSE nativo do Hermes para emitir
-   `agent.updated` no endpoint interno do admin.
-4. Atividade externa (Discord, CLI e Workspace) permanece snapshot ate Hermes
-   oferecer um evento global confiavel. Nao simular realtime com polling.
-
-## Proximas etapas
-
-1. Adicionar `hermes-office` ao workspace npm e importar a biblioteca no
-   frontend do admin.
-2. Criar um endpoint SSE autenticado no backend Nest.
-3. Definir como eventos externos ao Hermes serao emitidos, sem depender de
-   banco, logs ou arquivos internos nao suportados.
-4. Fazer uma tela visual propria no admin, sem acoplar ao Workspace.
-
-## Build
-
-```bash
-npm run typecheck
-npm run build
-```
+The visual layer does not poll. It renders the last valid snapshot while the
+SSE connection reconnects.
