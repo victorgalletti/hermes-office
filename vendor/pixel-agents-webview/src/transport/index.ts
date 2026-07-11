@@ -1,10 +1,10 @@
-import { isBrowserRuntime } from '../runtime.js';
+﻿import { isBrowserRuntime } from '../runtime.js';
 import { PostMessageTransport } from './postMessageTransport.js';
 import type { MessageTransport } from './types.js';
 import { WebSocketTransport } from './webSocketTransport.js';
 
 function createTransport(): MessageTransport {
-  const isEmbeddedDemo = window.location.pathname.includes('pixel-agents-engine');
+  const isEmbeddedDemo = /(?:pixel-agents-engine|hermes-office)/.test(window.location.pathname);
   if (!isBrowserRuntime || isEmbeddedDemo) {
     return new PostMessageTransport();
   }
@@ -19,3 +19,4 @@ function createTransport(): MessageTransport {
 /** Singleton transport instance. Import this everywhere instead of vscodeApi. */
 export const transport: MessageTransport = createTransport();
 export type { MessageTransport } from './types.js';
+
