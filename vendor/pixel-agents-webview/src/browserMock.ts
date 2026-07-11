@@ -1,5 +1,5 @@
-/**
- * Browser runtime mock — fetches assets and injects the same postMessage
+﻿/**
+ * Browser runtime mock â€” fetches assets and injects the same postMessage
  * events the VS Code extension would send.
  *
  * In Vite dev, it prefers pre-decoded JSON endpoints from middleware.
@@ -35,11 +35,11 @@ interface MockPayload {
   layout: unknown;
 }
 
-// ── Module-level state ─────────────────────────────────────────────────────────
+// â”€â”€ Module-level state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 let mockPayload: MockPayload | null = null;
 
-// ── PNG decode helpers (browser fallback) ───────────────────────────────────
+// â”€â”€ PNG decode helpers (browser fallback) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface DecodedPng {
   width: number;
@@ -171,7 +171,7 @@ async function decodeFurnitureFromPng(
   return sprites;
 }
 
-// ── Public API ─────────────────────────────────────────────────────────────────
+// â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Call before createRoot() in main.tsx.
@@ -231,7 +231,7 @@ export async function initBrowserMock(): Promise<void> {
   };
 
   console.log(
-    `[BrowserMock] Ready (${hasDecoded ? 'decoded-json' : 'browser-png-decode'}) — ${characters.length} chars, ${floorSprites.length} floors, ${wallSets.length} wall sets, ${catalog.length} furniture items`,
+    `[BrowserMock] Ready (${hasDecoded ? 'decoded-json' : 'browser-png-decode'}) â€” ${characters.length} chars, ${floorSprites.length} floors, ${wallSets.length} wall sets, ${catalog.length} furniture items`,
   );
 }
 
@@ -264,7 +264,7 @@ export function dispatchMockMessages(): void {
   dispatch({ type: 'wallTilesLoaded', sets: wallSets });
   dispatch({ type: 'furnitureAssetsLoaded', catalog: furnitureCatalog, sprites: furnitureSprites });
   dispatch({ type: 'layoutLoaded', layout });
-  dispatch({ type: 'agentTeamInfo', id: 101, agentName: 'Product research' });
+  dispatch({ type: 'agentTeamInfo', id: 101, agentName: 'Hermes' });
   dispatch({ type: 'agentTeamInfo', id: 102, agentName: 'Margin analysis' });
   dispatch({ type: 'agentTeamInfo', id: 103, agentName: 'Amazon catalog' });
   dispatch({ type: 'agentTeamInfo', id: 104, agentName: 'Operations' });
@@ -281,3 +281,4 @@ export function dispatchMockMessages(): void {
 
   console.log('[BrowserMock] Messages dispatched');
 }
+
