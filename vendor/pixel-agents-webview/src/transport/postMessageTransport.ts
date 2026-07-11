@@ -11,7 +11,9 @@ export class PostMessageTransport implements MessageTransport {
   private readonly vscodeApi: { postMessage(msg: unknown): void };
 
   constructor() {
-    this.vscodeApi = acquireVsCodeApi();
+    this.vscodeApi = typeof acquireVsCodeApi === 'function'
+      ? acquireVsCodeApi()
+      : { postMessage: () => undefined };
   }
 
   send(message: ClientMessage): void {

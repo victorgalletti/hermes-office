@@ -4,7 +4,8 @@ import type { MessageTransport } from './types.js';
 import { WebSocketTransport } from './webSocketTransport.js';
 
 function createTransport(): MessageTransport {
-  if (!isBrowserRuntime) {
+  const isEmbeddedDemo = window.location.pathname.includes('pixel-agents-engine');
+  if (!isBrowserRuntime || isEmbeddedDemo) {
     return new PostMessageTransport();
   }
   // Standalone browser: connect via WebSocket to the same host serving the SPA
